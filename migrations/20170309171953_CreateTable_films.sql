@@ -19,7 +19,7 @@ CREATE TYPE films.genre_type AS ENUM (
 CREATE TABLE IF NOT EXISTS "films"."films" (
   id        BIGSERIAL PRIMARY KEY NOT NULL,
   name      VARCHAR NOT NULL,
-  genre     genre_type[],
+  genre     films.genre_type[],
   release   TIMESTAMP
 )
 WITH (OIDS = FALSE);
