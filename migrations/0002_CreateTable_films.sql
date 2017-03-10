@@ -20,7 +20,8 @@ CREATE TABLE IF NOT EXISTS "films"."films" (
   id        BIGSERIAL PRIMARY KEY NOT NULL,
   name      VARCHAR NOT NULL,
   genre     films.genre_type[],
-  release   TIMESTAMP
+  release   TIMESTAMP,
+  CONSTRAINT uniq UNIQUE (name,genre,release)
 )
 WITH (OIDS = FALSE);
 
