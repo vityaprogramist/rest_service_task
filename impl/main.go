@@ -1,6 +1,13 @@
 package main
 
-import "fmt"
+import (
+	"encoding/json"
+	"fmt"
+	"log"
+	"net/http"
+)
+
+var database DBConnection
 
 func main() {
 	// router := mux.NewRouter().StrictSlash(true)
@@ -20,16 +27,31 @@ func main() {
 	//
 	// log.Fatal(http.ListenAndServe(":8080", router))
 
-	database := NewDB()
+	f := FilmQuery{}
+	g := "Action"
+	//r := 2010
+
+	f.Filter.Genre = &g
+	f.Filter.Release = nil
+	f.Page = 1
+	f.Limit = 20
+
+	bs, e := json.Marshal(f)
+	if e != nil {
+		fmt.Println(e)
+	}
+	fmt.Printf("json: %s", string(bs))
+
+	database = NewDB()
+
 	err := database.Open("movie_rental", "localhost", 5432, "postgres")
 	if err != nil {
-		fmt.Println(err)
+		panic(err)
 	}
 
-	err = database.CreateUser("aaaaa", "bbbbb", "ccccc", "abcde", 99, 79996450549)
-	if err != nil {
-		fmt.Println(err)
-	}
+	router := NewRouter()
+	log.Fatal(http.ListenAndServe(":8080", router))
+
 	return
 }
 
