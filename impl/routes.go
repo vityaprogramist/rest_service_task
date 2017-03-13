@@ -1,4 +1,4 @@
-package routes
+package main
 
 import (
 	"net/http"
@@ -16,8 +16,8 @@ type Route struct {
 type Routes []Route
 
 func NewRouter() *mux.Router {
-	router := mux.NewRouter().StrictSlash(true)
-
-	mux.NewRouter()
-
+	// router := mux.NewRouter().StrictSlash(true)
+	//
+	// mux.NewRouter()
+	return nil
 }
