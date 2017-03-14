@@ -1,12 +1,18 @@
 package main
 
 type User struct {
-	ID        int64  `json:"ID"`
-	Login     string `json:"Login"`
-	FirstName string `json:"FirstName"`
-	LastName  string `json:"LastName"`
-	Age       int    `json:"Age"`
-	Phone     int64  `json:"Phone"`
+	ID        *int64  `json:"ID,omitempty"`
+	Login     string  `json:"Login"`
+	FirstName string  `json:"FirstName"`
+	LastName  string  `json:"LastName"`
+	Age       int     `json:"Age"`
+	Phone     int64   `json:"Phone"`
+	PassInfo  *string `json:"PassInfo,omitempty"`
+}
+
+type AuthUser struct {
+	Login    string `json:"Login,required"`
+	Password string `json:"Password,required"`
 }
 
 type Film struct {
@@ -27,7 +33,7 @@ type Paging struct {
 }
 
 type FilmResponce struct {
-	Filter Filter `json:"filter"`
+	Filter Filter `json:"filter,omitempty"`
 	Films  []Film `json:"films"`
 	Paging Paging `json:"paging"`
 	Count  int    `json:"count"`

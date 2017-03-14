@@ -50,19 +50,19 @@ var routes = Routes{
 	Route{
 		"GetByID",
 		"POST",
-		"/get/{id}",
+		"/rented",
 		GetByID,
 	},
 	Route{
 		"StartRent",
-		"POST",
-		"/start",
+		"PUT",
+		"/start/{id}",
 		StartRent,
 	},
 	Route{
 		"EndRent",
-		"POST",
-		"/end",
+		"DELETE",
+		"/end/{id}",
 		EndRent,
 	},
 }

@@ -92,7 +92,7 @@ func (db *DB) GetFilmsByUser(id int64, pageSize int, pageNumber int) (*[]Film, e
 		return nil, fmt.Errorf("Database connection not opened.")
 	}
 
-	result, err := db.connection.Query("SELECT * FROM public.rented_by_user_id($1::INT, $2::INT, $3::VARCHAR, $4::INT)", id, pageSize, pageNumber)
+	result, err := db.connection.Query("SELECT * FROM public.rented_by_user_id($1::BIGINT, $2::INT, $3::INT)", id, pageSize, pageNumber)
 
 	if err != nil {
 		return nil, err
