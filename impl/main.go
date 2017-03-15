@@ -1,35 +1,41 @@
 package main
 
 import (
+	"encoding/gob"
 	"fmt"
+	"log"
+	"net/http"
 	"os"
 
-	"github.com/gorilla/securecookie"
 	conf "github.com/rest_service_task/impl/config"
+	"github.com/rest_service_task/impl/db"
+	"github.com/rest_service_task/impl/handlers"
+	"github.com/rest_service_task/impl/sessions"
+	"github.com/rest_service_task/impl/structs"
 )
-
-var database DBConnection
-
-//var cookieStore *sessions.CookieStore
-var sc *securecookie.SecureCookie
 
 func main() {
 	config, err := conf.ReadCmd(os.Args)
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println(config)
 
-	// database = NewDB()
-	// err := database.Open("movie_rental", "localhost", 5432, "postgres")
-	// if err != nil {
-	// 	panic(err)
-	// }
-	//
-	// sc = securecookie.New(securecookie.GenerateRandomKey(64), securecookie.GenerateRandomKey(32))
-	//
-	// router := NewRouter()
-	// log.Fatal(http.ListenAndServe(":8080", router))
+	database := db.NewDB()
+	err = database.Open(config.Database, config.DBHost, config.DBPort, config.User, config.Password)
+	if err != nil {
+		log.Fatalf("FATAL: %s\n", err.Error())
+	}
+
+	gob.Register(structs.User{})
+	s := sessions.NewSessionManager()
+	h := handlers.NewHandlerSet(database, s)
+	router := NewRouter(h)
+
+	docHandler := http.StripPrefix("/doc/", http.FileServer(http.Dir("../doc/")))
+	router.PathPrefix("/doc/").Handler(docHandler)
+	http.Handle("/", router)
+
+	log.Fatal(http.ListenAndServe(":8000", nil))
 
 	return
 }

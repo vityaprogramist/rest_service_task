@@ -10,7 +10,9 @@ import (
 type Config struct {
 	Host     string `json:"Host,required"`
 	Port     uint   `json:"Port,required"`
-	Database string `json:"Database, required"`
+	Database string `json:"Database,required"`
+	DBHost   string `json:"DBHost,required"`
+	DBPort   uint   `json:"DBPort,required"`
 	User     string `json:"User,required"`
 	Password string `json:"Password,required"`
 }
@@ -27,6 +29,8 @@ func ReadCmd(args []string) (*Config, error) {
 	cmdHostPtr := cmdCommand.String("host", "", "Hostname")
 	cmdPortPtr := cmdCommand.Uint("port", 0, "Port")
 	cmdDBPtr := cmdCommand.String("dbname", "", "Database name")
+	cmdDBHost := cmdCommand.String("dbhost", "127.0.0.1", "Database hostname")
+	cmdDBPort := cmdCommand.Uint("dbport", 5432, "Database port")
 	cmdUserPtr := cmdCommand.String("user", "", "Username")
 	cmdPassPtr := cmdCommand.String("pass", "", "Password")
 
@@ -34,7 +38,9 @@ func ReadCmd(args []string) (*Config, error) {
 		return &Config{
 			Host:     "127.0.0.1",
 			Port:     5432,
-			Database: "movies",
+			Database: "movie_rental",
+			DBHost:   "127.0.0.1",
+			DBPort:   5432,
 			User:     "postgres",
 			Password: "postgres",
 		}, nil
@@ -64,13 +70,15 @@ func ReadCmd(args []string) (*Config, error) {
 				Host:     *cmdHostPtr,
 				Port:     *cmdPortPtr,
 				Database: *cmdDBPtr,
+				DBHost:   *cmdDBHost,
+				DBPort:   *cmdDBPort,
 				User:     *cmdUserPtr,
 				Password: *cmdPassPtr,
 			}, nil
 		}
 	}
 
-	flag.PrintDefaults()
+	//flag.PrintDefaults()
 	return nil, fmt.Errorf("Read usage!")
 }
 

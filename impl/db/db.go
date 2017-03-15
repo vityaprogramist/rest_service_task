@@ -9,7 +9,7 @@ import (
 )
 
 type DBConnection interface {
-	Open(dbname string, host string, port int, pass string) error
+	Open(dbname string, host string, port uint, user string, pass string) error
 	CreateUser(firstName string, lastName string, login string, passHash string, age int, phone int64) error
 	AuthUser(login string, passHash string) (*structs.User, error)
 	GetFilms(pageSize int, pageNumber int, genre *string, releaseYear *int) (*[]structs.Film, error)
@@ -21,18 +21,27 @@ type DBConnection interface {
 
 type DB struct {
 	connection *sql.DB
-	connStrint string
 }
 
-func NewDB() *DB {
-	return &DB{nil, ""}
+func NewDB() DBConnection {
+	return &DB{nil}
 }
 
-func (db *DB) Open(dbname string, host string, port int, pass string) error {
+func (db *DB) Open(dbname string, host string, port uint, user string, pass string) error {
 	var err error
-	connString := fmt.Sprintf("user=postgres dbname=%s host=%s port=%d password=%s sslmode=disable", dbname, host, port, pass)
+	connString := fmt.Sprintf("user=%s dbname=%s host=%s port=%d password=%s sslmode=disable", user, dbname, host, port, pass)
+
 	db.connection, err = sql.Open("postgres", connString)
-	return err
+	if err != nil {
+		return err
+	}
+
+	err = db.connection.Ping()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (db *DB) CreateUser(firstName string, lastName string, login string, passHash string, age int, phone int64) error {

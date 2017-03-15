@@ -35,12 +35,12 @@ type Paging struct {
 type FilmResponce struct {
 	Filter Filter `json:"filter,omitempty"`
 	Films  []Film `json:"films"`
-	Paging Paging `json:"paging"`
+	Paging Paging `json:"paging,omitempty"`
 	Count  int    `json:"count"`
 }
 
 type FilmQuery struct {
-	Filter Filter `json:"filter"`
+	Filter Filter `json:"filter,omitempty"`
 	Page   int    `json:"page"`
 	Limit  int    `json:"limit"`
 }

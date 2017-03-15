@@ -1,45 +1,28 @@
 package errors
 
-import "fmt"
-
-const (
-	GET_FILMS_JSON_ERROR int = iota + 1
-	GET_FILMS_DB_ERROR
-	REGISTER_PASS_ERROR
-	AUTH_ERROR
-	AUTH_INTERNAL_ERROR
-	GET_BY_ID_UNAUTH_ERROR
-	GET_BY_ID_INTERNAL_ERROR
-	START_UNAUTH_ERROR
-	START_FILM_ID_ERROR
-	START_ERROR
-	END_UNAUTH_ERROR
-	END_FILM_ID_ERROR
-	END_ERROR
+import (
+	"encoding/json"
+	"fmt"
+	"net/http"
 )
 
 const (
-	GET_FILMS_JSON_ERROR_MESSAGE     string = "Passed bad json data."
-	GET_FILMS_DB_ERROR_MESSAGE       string = "We have some problem with backend. :("
-	REGISTER_PASS_ERROR_MESSAGE      string = "Не указан пароль."
-	AUTH_ERROR_MESSAGE               string = "Неверный логин или пароль."
-	AUTH_INTERNAL_ERROR_MESSAGE      string = "Неизвестная ошибка при авторизации пользователя."
-	GET_BY_ID_UNAUTH_ERROR_MESSAGE   string = "Авторизуйтесь!"
-	GET_BY_ID_INTERNAL_ERROR_MESSAGE string = "ой, что-то пошло не так. O_o"
-	START_UNAUTH_ERROR_MESSAGE       string = "Авторизуйтесь!"
-	START_FILM_ID_ERROR_MESSAGE      string = "Нет такого фильма"
+	NOT_AUTHORIZED_ERROR = iota + 1
+	BAD_REQUEST_ERROR
+	INTERNAL_ERROR
+	FORBIDDEN_ERROR
+)
+
+const (
+	NOT_AUTHORIZED_ERROR_MESSAGE string = "Это действие доступно только авторизованным пользователям."
+	BAD_REQUEST_ERROR_MESSAGE    string = "Неправильные параметры запроса"
+	INTERNAL_ERROR_MESSAGE       string = "Ой, извините, что-то у нас пошло не так. :("
 )
 
 var messages = map[int]string{
-	GET_FILMS_JSON_ERROR:     GET_FILMS_JSON_ERROR_MESSAGE,
-	GET_FILMS_DB_ERROR:       GET_FILMS_DB_ERROR_MESSAGE,
-	REGISTER_PASS_ERROR:      REGISTER_PASS_ERROR_MESSAGE,
-	AUTH_ERROR:               AUTH_ERROR_MESSAGE,
-	AUTH_INTERNAL_ERROR:      AUTH_INTERNAL_ERROR_MESSAGE,
-	GET_BY_ID_UNAUTH_ERROR:   GET_BY_ID_UNAUTH_ERROR_MESSAGE,
-	GET_BY_ID_INTERNAL_ERROR: GET_BY_ID_INTERNAL_ERROR_MESSAGE,
-	START_UNAUTH_ERROR:       START_UNAUTH_ERROR_MESSAGE,
-	START_FILM_ID_ERROR:      START_FILM_ID_ERROR_MESSAGE,
+	NOT_AUTHORIZED_ERROR: NOT_AUTHORIZED_ERROR_MESSAGE,
+	BAD_REQUEST_ERROR:    BAD_REQUEST_ERROR_MESSAGE,
+	INTERNAL_ERROR:       INTERNAL_ERROR_MESSAGE,
 }
 
 func getMessage(code int) string {
@@ -61,4 +44,13 @@ func (e *ErrorResponse) Error() string {
 func NewError(code int) *ErrorResponse {
 	message := getMessage(code)
 	return &ErrorResponse{code, message}
+}
+
+func WriteHttpErrorMessage(w http.ResponseWriter, status int, e *ErrorResponse) error {
+	w.Header().Set("Content-Type", "application/json;charset=UTF-8")
+	w.WriteHeader(status)
+	if err := json.NewEncoder(w).Encode(e); err != nil {
+		return err
+	}
+	return nil
 }
