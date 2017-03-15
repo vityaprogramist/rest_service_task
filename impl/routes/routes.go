@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/rest_service_task/impl/handlers"
 )
 
 type Route struct {
@@ -32,8 +33,8 @@ var routes = Routes{
 	Route{
 		"CreateUser",
 		"POST",
-		"/register",
-		Register,
+		"/create",
+		handlers.Register,
 	},
 	Route{
 		"AuthUser",

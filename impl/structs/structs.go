@@ -1,4 +1,4 @@
-package main
+package structs
 
 type User struct {
 	ID        *int64  `json:"ID,omitempty"`

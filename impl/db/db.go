@@ -1,18 +1,19 @@
-package main
+package db
 
 import (
 	"database/sql"
 	"fmt"
 
 	_ "github.com/lib/pq"
+	"github.com/rest_service_task/impl/structs"
 )
 
 type DBConnection interface {
 	Open(dbname string, host string, port int, pass string) error
 	CreateUser(firstName string, lastName string, login string, passHash string, age int, phone int64) error
-	AuthUser(login string, passHash string) (*User, error)
-	GetFilms(pageSize int, pageNumber int, genre *string, releaseYear *int) (*[]Film, error)
-	GetFilmsByUser(id int64, pageSize int, pageNumber int) (*[]Film, error)
+	AuthUser(login string, passHash string) (*structs.User, error)
+	GetFilms(pageSize int, pageNumber int, genre *string, releaseYear *int) (*[]structs.Film, error)
+	GetFilmsByUser(id int64, pageSize int, pageNumber int) (*[]structs.Film, error)
 	StartRent(login string, filmID int) error
 	EndRent(filmID int, userID int64) error
 	Close() error
@@ -43,7 +44,7 @@ func (db *DB) CreateUser(firstName string, lastName string, login string, passHa
 	return err
 }
 
-func (db *DB) AuthUser(login string, passHash string) (*User, error) {
+func (db *DB) AuthUser(login string, passHash string) (*structs.User, error) {
 	if db.connection == nil {
 		return nil, fmt.Errorf("Database connection not opened.")
 	}
@@ -53,7 +54,7 @@ func (db *DB) AuthUser(login string, passHash string) (*User, error) {
 	// 	return nil, err
 	// }
 
-	var user User
+	var user structs.User
 	err := db.connection.QueryRow("SELECT * FROM public.auth_user($1::VARCHAR, $2::VARCHAR)", login, passHash).
 		Scan(&user.ID, &user.Login, &user.FirstName, &user.LastName, &user.Age, &user.Phone)
 
@@ -64,7 +65,7 @@ func (db *DB) AuthUser(login string, passHash string) (*User, error) {
 	return &user, nil
 }
 
-func (db *DB) GetFilms(pageSize int, pageNumber int, genre *string, releaseYear *int) (*[]Film, error) {
+func (db *DB) GetFilms(pageSize int, pageNumber int, genre *string, releaseYear *int) (*[]structs.Film, error) {
 	if db.connection == nil {
 		return nil, fmt.Errorf("Database connection not opened.")
 	}
@@ -75,9 +76,9 @@ func (db *DB) GetFilms(pageSize int, pageNumber int, genre *string, releaseYear 
 		return nil, err
 	}
 
-	films := []Film{}
+	films := []structs.Film{}
 	for result.Next() {
-		var film Film
+		var film structs.Film
 		err = result.Scan(&film.ID, &film.Title, &film.Genres, &film.ReleaseYear)
 		if err != nil {
 			return nil, err
@@ -87,7 +88,7 @@ func (db *DB) GetFilms(pageSize int, pageNumber int, genre *string, releaseYear 
 	return &films, nil
 }
 
-func (db *DB) GetFilmsByUser(id int64, pageSize int, pageNumber int) (*[]Film, error) {
+func (db *DB) GetFilmsByUser(id int64, pageSize int, pageNumber int) (*[]structs.Film, error) {
 	if db.connection == nil {
 		return nil, fmt.Errorf("Database connection not opened.")
 	}
@@ -98,9 +99,9 @@ func (db *DB) GetFilmsByUser(id int64, pageSize int, pageNumber int) (*[]Film, e
 		return nil, err
 	}
 
-	films := []Film{}
+	films := []structs.Film{}
 	for result.Next() {
-		var film Film
+		var film structs.Film
 		err = result.Scan(&film.ID, &film.Title, &film.Genres, &film.ReleaseYear)
 		if err != nil {
 			return nil, err
