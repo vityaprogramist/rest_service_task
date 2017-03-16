@@ -26,12 +26,14 @@ func main() {
 		log.Fatalf("FATAL: %s\n", err.Error())
 	}
 
+	logger := log.New(os.Stdout, "ERROR", log.LstdFlags)
 	gob.Register(structs.User{})
 	s := sessions.NewSessionManager()
-	h := handlers.NewHandlerSet(database, s)
+	h := handlers.NewHandlerSet(database, s, logger)
 	router := NewRouter(h)
 
-	docHandler := http.StripPrefix("/doc/", http.FileServer(http.Dir("../doc/")))
+	// For debuggin change relation path for docHandler
+	docHandler := http.StripPrefix("/doc/", http.FileServer(http.Dir("./doc/")))
 	router.PathPrefix("/doc/").Handler(docHandler)
 	http.Handle("/", router)
 

@@ -17,16 +17,17 @@ type AuthUserParams struct {
 // swagger:route POST /auth user AuthUser
 // Authorization user method
 //		Responses:
-//			default: ErrorResponse
+//			default: errorResponse
 //			200:
 func (hs *Handlers) Auth(w http.ResponseWriter, r *http.Request) {
 	var auth structs.AuthUser
 	err := ReadBody(r, &auth)
 
 	if err != nil {
+		hs.logger.Println(err.Error())
 		e := errors.NewError(errors.BAD_REQUEST_ERROR)
 		if fatal := errors.WriteHttpErrorMessage(w, http.StatusBadRequest, e); fatal != nil {
-			// log FATAL_ERROR
+			hs.logger.Fatal(fatal.Error())
 		}
 		return
 	}
@@ -35,13 +36,14 @@ func (hs *Handlers) Auth(w http.ResponseWriter, r *http.Request) {
 
 	user, err := hs.database.AuthUser(auth.Login, passHash)
 	if err != nil {
+		hs.logger.Println(err.Error())
 		e := &errors.ErrorResponse{
 			Code:    errors.NOT_AUTHORIZED_ERROR,
 			Message: err.Error(),
 		}
 
 		if fatal := errors.WriteHttpErrorMessage(w, http.StatusUnauthorized, e); fatal != nil {
-			// log FATAL_ERROR
+			hs.logger.Fatal(fatal.Error())
 		}
 		return
 	}

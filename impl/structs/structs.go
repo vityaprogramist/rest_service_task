@@ -27,20 +27,7 @@ type Filter struct {
 	Release *int    `json:"Release,omitempty"`
 }
 
-type Paging struct {
-	Prev *string `json:"Prev"`
-	Next *string `json:"Next"`
-}
-
 type FilmResponce struct {
-	Filter Filter `json:"filter,omitempty"`
-	Films  []Film `json:"films"`
-	Paging Paging `json:"paging,omitempty"`
-	Count  int    `json:"count"`
-}
-
-type FilmQuery struct {
-	Filter Filter `json:"filter,omitempty"`
-	Page   int    `json:"page"`
-	Limit  int    `json:"limit"`
+	Films []Film `json:"films"`
+	Count int    `json:"count"`
 }

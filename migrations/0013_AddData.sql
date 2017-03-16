@@ -32,16 +32,16 @@ INSERT INTO film.film(title, release_year) VALUES
   ('Матрица',1999);
 
 INSERT INTO film.genre(name) VALUES
-  ('Action'),
-  ('Drama'),
-  ('Comedy'),
-  ('Fantasy'),
-  ('Horror'),
-  ('Criminal'),
-  ('Adventure'),
-  ('Thriller'),
-  ('Historical'),
-  ('Western');
+  ('action'),
+  ('drama'),
+  ('comedy'),
+  ('fantasy'),
+  ('horror'),
+  ('criminal'),
+  ('adventure'),
+  ('thriller'),
+  ('historical'),
+  ('western');
 
 INSERT INTO film.film_genre(film_id, genre_id) VALUES
   (1,2),

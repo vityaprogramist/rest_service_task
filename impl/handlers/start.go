@@ -9,14 +9,19 @@ import (
 	"github.com/rest_service_task/impl/structs"
 )
 
+// swagger:route POST /start/{id} film filmrent
+// Method for start rent a film
+//		Responses:
+//			default: errorResponse
+//			200:
 func (hs *Handlers) StartRent(w http.ResponseWriter, r *http.Request) {
 	var user structs.User
 	err := hs.secure.ReadSession(r, &user)
 	if err != nil {
-		// log ERROR
+		hs.logger.Println(err.Error())
 		fatal := errors.WriteHttpErrorMessage(w, http.StatusUnauthorized, errors.NewError(errors.NOT_AUTHORIZED_ERROR))
 		if fatal != nil {
-			// log FATAL_ERROR
+			hs.logger.Fatal(fatal.Error())
 		}
 		return
 	}
@@ -25,16 +30,17 @@ func (hs *Handlers) StartRent(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(vars["id"])
 
 	if err != nil {
-		// log ERROR
+		hs.logger.Println(err.Error())
 		fatal := errors.WriteHttpErrorMessage(w, http.StatusBadRequest, errors.NewError(errors.BAD_REQUEST_ERROR))
 		if fatal != nil {
-			// FATAL_ERROR
+			hs.logger.Fatal(fatal.Error())
 		}
 		return
 	}
 
 	err = hs.database.StartRent(user.Login, id)
 	if err != nil {
+		hs.logger.Println(err.Error())
 		e := &errors.ErrorResponse{
 			Code:    errors.FORBIDDEN_ERROR,
 			Message: err.Error(),
@@ -42,7 +48,7 @@ func (hs *Handlers) StartRent(w http.ResponseWriter, r *http.Request) {
 
 		fatal := errors.WriteHttpErrorMessage(w, http.StatusForbidden, e)
 		if fatal != nil {
-			// log  FATAL_ERROR
+			hs.logger.Fatal(fatal.Error())
 		}
 		return
 	}
